@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\BahanBakuController;
 
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -18,4 +19,10 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AuthController::class, 'adminDashboard'])
         ->middleware(['auth', 'role:gudang'])
         ->name('admin.dashboard');
+
+    // Routes untuk Input Bahan Baku (Admin Only)
+    Route::middleware(['role:gudang'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('bahan-baku/create', [BahanBakuController::class, 'create'])->name('bahan-baku.create');
+        Route::post('bahan-baku', [BahanBakuController::class, 'store'])->name('bahan-baku.store');
+    });
 });
