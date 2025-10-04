@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\BahanBaku;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 /**
  * Controller untuk menambahkan bahan baku baru
@@ -68,5 +69,48 @@ class BahanBakuController extends Controller
 
         return redirect()->route('admin.bahan-baku.create')
             ->with('success', 'Bahan baku berhasil ditambahkan dengan status Tersedia');
+    }
+
+    /**
+     * Menghapus bahan baku dari database
+     * Hanya mengizinkan penghapusan bahan baku yang berstatus kadaluarsa
+     * dan tidak sedang digunakan dalam permintaan
+     * 
+     * @param BahanBaku $bahanBaku
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(BahanBaku $bahanBaku)
+    {
+        // Cek apakah bahan baku berstatus kadaluarsa
+        if ($bahanBaku->status_otomatis !== BahanBaku::STATUS_KADALUARSA) {
+            return redirect()->route('admin.bahan-baku.index')
+                ->with('error', 'Bahan baku dengan status "' . $bahanBaku->status_otomatis . '" tidak dapat dihapus. Hanya bahan baku yang sudah kadaluarsa yang dapat dihapus.');
+        }
+
+        // Cek apakah bahan baku masih digunakan dalam permintaan
+        try {
+            // Cek di tabel permintaan_detail
+            $isUsedInPermintaan = DB::table('permintaan_detail')
+                ->where('bahan_id', $bahanBaku->id)
+                ->exists();
+
+            if ($isUsedInPermintaan) {
+                return redirect()->route('admin.bahan-baku.index')
+                    ->with('error', 'Bahan baku "' . $bahanBaku->nama . '" tidak dapat dihapus karena masih digunakan dalam data permintaan. Hapus data permintaan terkait terlebih dahulu.');
+            }
+
+            // Simpan nama untuk pesan konfirmasi
+            $namaBahan = $bahanBaku->nama;
+            
+            // Hapus bahan baku
+            $bahanBaku->delete();
+
+            return redirect()->route('admin.bahan-baku.index')
+                ->with('success', "Bahan baku '{$namaBahan}' berhasil dihapus karena sudah kadaluarsa.");
+
+        } catch (\Exception $e) {
+            return redirect()->route('admin.bahan-baku.index')
+                ->with('error', 'Terjadi kesalahan saat menghapus bahan baku. Bahan baku mungkin masih digunakan dalam sistem.');
+        }
     }
 }

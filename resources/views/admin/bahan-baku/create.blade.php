@@ -142,7 +142,7 @@
                             </div>
 
                             <div class="d-flex justify-content-between">
-                                <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                                <a href="{{ route('admin.dashboard') }}" class="btn btn-warning">
                                     Kembali ke Dashboard
                                 </a>
                                 <button type="submit" class="btn btn-success">
