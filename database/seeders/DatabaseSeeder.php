@@ -2,22 +2,21 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+/**
+ * Database Seeder untuk aplikasi MBG
+ * Saat ini dinonaktifkan karena data user sudah ada di production database
+ */
 class DatabaseSeeder extends Seeder
 {
     /**
-     * Seed the application's database.
+     * Menjalankan database seeder
+     * Kosong karena data sudah ada di database production
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Seeder dinonaktifkan - data user sudah ada di database production
+        // Jika perlu menambah data test, uncomment dan modifikasi kode di bawah
     }
 }

@@ -2,34 +2,53 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Model User untuk tabel 'user'
+ * Menggunakan prinsip clean code dengan property yang jelas dan metode yang fokus
+ */
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
 
     /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
+     * Nama tabel yang digunakan model ini
+     */
+    protected $table = 'user';
+
+    /**
+     * Menonaktifkan timestamps karena tabel tidak memiliki created_at/updated_at
+     */
+    public $timestamps = false;
+
+    /**
+     * Atribut yang dapat diisi secara massal
      */
     protected $fillable = [
         'name',
-        'email',
+        'email', 
+        'password',
+        'role'
+    ];
+
+    /**
+     * Atribut yang disembunyikan saat serialisasi
+     */
+    protected $hidden = [
         'password',
     ];
 
     /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
+     * Mengecek apakah user memiliki role tertentu
+     * 
+     * @param string $role
+     * @return bool
      */
-    protected $hidden = [
-        'password',
-        'remember_token',
-    ];
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
+    }
 }
