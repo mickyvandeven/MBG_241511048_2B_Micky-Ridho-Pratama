@@ -9,8 +9,8 @@
 <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                MBG Admin Dashboard
+            <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
+                Sistem Informasi Manajemen Bahan Gudang (MBG)
             </a>
             <div class="navbar-nav ms-auto">
                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
@@ -27,38 +27,52 @@
         <div class="row">
             <div class="col-12">
                 <h2 class="mb-4">
-                    Dashboard Admin Gudang
+                    Dashboard Gudang
                 </h2>
                 <p class="lead">Selamat datang di sistem manajemen bahan baku MBG</p>
             </div>
         </div>
 
         <div class="row mt-4">
-            <div class="col-md-6 col-lg-6 mb-4">
+            <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
                     <div class="card-body text-center">
                         <div class="mb-3">
-                            <h1 style="font-size: 4rem; color: #198754;">+</h1>
+                            <h1 style="font-size: 3rem; color: #198754;">+</h1>
                         </div>
-                        <h4 class="card-title">Input Bahan Baku</h4>
-                        <p class="card-text">Tambahkan bahan baku baru dengan status otomatis "Tersedia"</p>
-                        <a href="{{ route('admin.bahan-baku.create') }}" class="btn btn-success btn-lg">
-                            Input Bahan Baku Baru
+                        <h5 class="card-title">Input Bahan Baku</h5>
+                        <p class="card-text">Tambahkan bahan baku baru</p>
+                        <a href="{{ route('admin.bahan-baku.create') }}" class="btn btn-success">
+                            Input Bahan Baku
                         </a>
                     </div>
                 </div>
             </div>
 
-            <div class="col-md-6 col-lg-6 mb-4">
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <h1 style="font-size: 3rem; color: #0d6efd;">📋</h1>
+                        </div>
+                        <h5 class="card-title">Daftar Bahan Baku</h5>
+                        <p class="card-text">Lihat daftar dan status otomatis</p>
+                        <a href="{{ route('admin.bahan-baku.index') }}" class="btn btn-primary">
+                            Lihat Daftar
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm border-info">
                     <div class="card-body text-center">
                         <div class="mb-3">
-                            <h1 style="font-size: 4rem; color: #0dcaf0;">i</h1>
+                            <h1 style="font-size: 3rem; color: #0dcaf0;">i</h1>
                         </div>
-                        <h4 class="card-title">Informasi System</h4>
+                        <h5 class="card-title">Status Otomatis</h5>
                         <p class="card-text">
-                            Sistem otomatis menyimpan bahan baku dengan status <strong>"Tersedia"</strong> 
-                            dan validasi tanggal kadaluarsa
+                            Sistem menghitung status berdasarkan stok dan tanggal kadaluarsa
                         </p>
                     </div>
                 </div>
@@ -68,12 +82,12 @@
         <div class="row mt-4">
             <div class="col-12">
                 <div class="alert alert-info">
-                    <h5>Fitur Bahan Baku</h5>
+                    <h5>Aturan Status Otomatis Bahan Baku</h5>
                     <ul class="mb-0">
-                        <li>Input bahan baku baru dengan atribut lengkap (nama, kategori, jumlah, satuan, tanggal masuk, tanggal kadaluarsa)</li>
-                        <li>Status otomatis diset sebagai "Tersedia" saat input baru</li>
-                        <li>Validasi tanggal kadaluarsa harus setelah tanggal masuk</li>
-                        <li>Kelola dan update status bahan baku (Tersedia, Habis, Kadaluarsa)</li>
+                        <li><strong>Habis:</strong> jika jumlah = 0</li>
+                        <li><strong>Kadaluarsa:</strong> jika hari_ini ≥ tanggal_kadaluarsa</li>
+                        <li><strong>Segera Kadaluarsa:</strong> jika tanggal_kadaluarsa - hari_ini ≤ 3 hari dan stok > 0</li>
+                        <li><strong>Tersedia:</strong> jika stok > 0 dan tidak masuk kondisi di atas</li>
                     </ul>
                 </div>
             </div>

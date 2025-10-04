@@ -10,16 +10,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container">
             <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
-                MBG Admin
+                Sistem Informasi Manajemen Bahan Gudang (MBG)
             </a>
-            <div class="navbar-nav ms-auto">
-                <form action="{{ route('logout') }}" method="POST" class="d-inline">
-                    @csrf
-                    <button type="submit" class="btn btn-outline-light">
-                        Logout
-                    </button>
-                </form>
-            </div>
         </div>
     </nav>
 

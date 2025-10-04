@@ -12,6 +12,18 @@ use Illuminate\Http\Request;
 class BahanBakuController extends Controller
 {
     /**
+     * Menampilkan daftar bahan baku dengan status otomatis
+     * 
+     * @return \Illuminate\View\View
+     */
+    public function index()
+    {
+        $bahanBaku = BahanBaku::orderBy('tanggal_masuk', 'desc')->get();
+        
+        return view('admin.bahan-baku.index', compact('bahanBaku'));
+    }
+
+    /**
      * Menampilkan form untuk input bahan baku baru
      * 
      * @return \Illuminate\View\View
@@ -48,8 +60,8 @@ class BahanBakuController extends Controller
             'tanggal_kadaluarsa.after' => 'Tanggal kadaluarsa harus setelah tanggal masuk',
         ]);
 
-        // Set status awal sebagai Tersedia
-        $validatedData['status'] = BahanBaku::STATUS_TERSEDIA;
+        // Status akan dihitung otomatis berdasarkan aturan bisnis
+        // Tidak perlu set status manual karena menggunakan accessor
 
         // Simpan ke database
         BahanBaku::create($validatedData);

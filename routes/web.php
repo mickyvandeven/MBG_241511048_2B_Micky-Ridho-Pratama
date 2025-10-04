@@ -22,6 +22,7 @@ Route::middleware(['auth'])->group(function () {
 
     // Routes untuk Input Bahan Baku (Admin Only)
     Route::middleware(['role:gudang'])->prefix('admin')->name('admin.')->group(function () {
+        Route::get('bahan-baku', [BahanBakuController::class, 'index'])->name('bahan-baku.index');
         Route::get('bahan-baku/create', [BahanBakuController::class, 'create'])->name('bahan-baku.create');
         Route::post('bahan-baku', [BahanBakuController::class, 'store'])->name('bahan-baku.store');
     });
