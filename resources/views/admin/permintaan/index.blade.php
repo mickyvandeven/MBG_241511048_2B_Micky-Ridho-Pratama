@@ -66,84 +66,62 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach($permintaan as $i => $p)
-                            @php
-                                $borderColor = '#333333';
-                                $borderStyle = 'border-left: 4px solid #333333; background-color: rgba(51, 51, 51, 0.1);';
-                                $details = $p->details;
-                            @endphp
-                            <tr style="{{ $borderStyle }}">
-                                <td style="color: {{ $borderColor }}; font-weight: bold;">#{{ $p->id }}</td>
-                                <td style="color: {{ $borderColor }};">{{ $p->nama_peminta }}</td>
+                        @foreach($permintaan as $p)
+                            <tr class="border-start border-3" style="border-left-color: #333333 !important; background-color: rgba(51, 51, 51, 0.05);">
+                                <td class="fw-bold text-dark">#{{ $p->id }}</td>
+                                <td class="text-dark">{{ $p->nama_peminta }}</td>
                                 <td>
-                                    @php
-                                        $dateDisplay = '-';
-                                        if(isset($chosenDateColumn) && $chosenDateColumn){
-                                            $val = $p->{$chosenDateColumn} ?? null;
-                                            if($val){
-                                                try {
-                                                    $dateDisplay = \Illuminate\Support\Carbon::parse($val)->format('d/m/Y');
-                                                } catch (Exception $e) {
-                                                    $dateDisplay = $val; // fallback raw
-                                                }
-                                            }
-                                        }
-                                    @endphp
-                                    {{ $dateDisplay }}
+                                    {{ isset($chosenDateColumn) && $p->{$chosenDateColumn} ? 
+                                        \Illuminate\Support\Carbon::parse($p->{$chosenDateColumn})->format('d/m/Y') : '-' }}
                                 </td>
-                                <td style="color: {{ $borderColor }};">
-                                    @php
-                                        // Tampilkan nama bahan saja tanpa kuantitas
-                                        $bahanNames = [];
-                                        foreach ($p->details as $d) {
-                                            if ($d->bahan && $d->bahan->nama) {
-                                                $bahanNames[] = $d->bahan->nama;
-                                            }
-                                        }
-                                        $bahanValue = !empty($bahanNames) ? implode(', ', array_unique($bahanNames)) : '-';
-                                    @endphp
-                                    <span>{{ $bahanValue }}</span>
+                                <td class="text-dark">
+                                    {{ $p->details->pluck('bahan.nama')->filter()->unique()->implode(', ') ?: '-' }}
                                 </td>
-                                <td style="color: {{ $borderColor }}; font-weight: bold;">{{ number_format($p->total_quantity) }}</td>
+                                <td class="fw-bold text-dark">{{ number_format($p->total_quantity) }}</td>
                                 <td>
-                                    <div style="background-color: {{ $borderColor }}; color: white; padding: 4px 12px; border-radius: 6px; border: 2px solid {{ $borderColor }}; display: inline-block; font-size: 0.85em; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                                        {{ $p->status }}
+                                    <span class="badge bg-dark px-3 py-2 mb-2 d-block">{{ $p->status }}</span>
+                                    
+                                    <div class="btn-group-vertical d-grid gap-1">
+                                        @if($p->status === \App\Models\Permintaan::STATUS_MENUNGGU)
+                                            <form action="{{ route('admin.permintaan.approve', $p) }}" method="POST" class="d-inline">
+                                                @csrf
+                                                <button type="submit" class="btn btn-sm btn-success w-100" 
+                                                        onclick="return confirm('Setujui permintaan #{{ $p->id }}?')">Setujui</button>
+                                            </form>
+                                            <button type="button" class="btn btn-sm btn-danger" 
+                                                    data-bs-toggle="modal" data-bs-target="#rejectModal" data-id="{{ $p->id }}">Tolak</button>
+                                        @endif
+                                        <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                data-bs-toggle="collapse" data-bs-target="#detail-{{ $p->id }}" 
+                                                aria-expanded="false">Detail</button>
                                     </div>
-                                    @if($p->status === \App\Models\Permintaan::STATUS_MENUNGGU)
-                                        <br><br>
-                                        <form action="{{ route('admin.permintaan.approve', $p) }}" method="POST" class="d-inline">
-                                            @csrf
-                                            <button type="submit" class="btn btn-sm btn-success" onclick="return confirm('Setujui permintaan #{{ $p->id }}?')">Setujui</button>
-                                        </form>
-                                        <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal" data-id="{{ $p->id }}">Tolak</button>
-                                    @endif
-                                    <button type="button" class="btn btn-sm btn-outline-primary ms-1" data-bs-toggle="collapse" data-bs-target="#detail-{{ $p->id }}" aria-expanded="false">Detail</button>
+                                    
                                     @if($p->status === \App\Models\Permintaan::STATUS_DITOLAK && !empty($p->alasan_penolakan))
-                                        <div class="small text-muted mt-1">Alasan: {{ $p->alasan_penolakan }}</div>
+                                        <div class="small text-muted mt-2"><strong>Alasan:</strong> {{ $p->alasan_penolakan }}</div>
                                     @endif
                                 </td>
                             </tr>
-                            <tr class="collapse" id="detail-{{ $p->id }}" style="background-color: rgba({{ $p->status === 'Menunggu' ? '108, 117, 125' : ($p->status === 'Disetujui' ? '25, 135, 84' : ($p->status === 'Diproses' ? '13, 202, 240' : ($p->status === 'Selesai' ? '13, 110, 253' : '220, 53, 69'))) }}, 0.05); border-left: 4px solid {{ $borderColor }};">
-                                <td colspan="6" style="padding: 15px;">
+                            <tr class="collapse bg-light" id="detail-{{ $p->id }}">
+                                <td colspan="6" class="p-4">
                                     <strong>Detail Permintaan:</strong>
-                                    @if($details->count())
-                                        <div class="table-responsive mt-2">
-                                            <table class="table table-sm table-bordered mb-0" style="border: 1px solid {{ $borderColor }};">
-                                                <thead style="background-color: {{ $borderColor }}; color: white;">
+                                    @if($p->details->count())
+                                        <div class="table-responsive mt-3">
+                                            <table class="table table-sm table-bordered border-dark mb-0">
+                                                <thead class="table-dark">
                                                     <tr>
-                                                        <th style="border-color: {{ $borderColor }};">#</th>
-                                                        <th style="border-color: {{ $borderColor }};">Nama Bahan</th>
-                                                        <th style="border-color: {{ $borderColor }};">Jumlah Diminta</th>
-                                                        <th style="border-color: {{ $borderColor }};">Satuan</th>
+                                                        <th>#</th>
+                                                        <th>Nama Bahan</th>
+                                                        <th>Jumlah Diminta</th>
+                                                        <th>Satuan</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    @foreach($details as $idx => $d)
-                                                        <tr style="border-color: {{ $borderColor }};">
-                                                            <td style="border-color: {{ $borderColor }};">{{ $idx + 1 }}</td>
-                                                            <td style="border-color: {{ $borderColor }};">{{ $d->bahan->nama ?? '—' }}</td>
-                                                            <td style="border-color: {{ $borderColor }};">{{ number_format($d->jumlah) }}</td>
-                                                            <td style="border-color: {{ $borderColor }};">{{ $d->bahan->satuan ?? '—' }}</td>
+                                                    @foreach($p->details as $idx => $detail)
+                                                        <tr>
+                                                            <td>{{ $idx + 1 }}</td>
+                                                            <td>{{ $detail->bahan->nama ?? '—' }}</td>
+                                                            <td>{{ number_format($detail->jumlah) }}</td>
+                                                            <td>{{ $detail->bahan->satuan ?? '—' }}</td>
                                                         </tr>
                                                     @endforeach
                                                 </tbody>
