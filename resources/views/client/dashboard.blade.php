@@ -15,12 +15,6 @@
                     <button type="submit" class="btn btn-danger">Logout</button>
                 </form>
             </div>
-            <div class="card">
-                <div class="card-body">
-                    <h5>Selamat datang, {{ auth()->user()->name }}!</h5>
-                    <p>Anda login sebagai: <strong>{{ auth()->user()->role }}</strong></p>
-                </div>
-            </div>
         </div>
     </div>
 </div>

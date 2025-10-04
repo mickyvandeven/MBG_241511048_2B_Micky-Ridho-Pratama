@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\BahanBakuController;
+use App\Http\Controllers\PermintaanController;
 
 Route::get('/', [AuthController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
@@ -26,5 +27,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('bahan-baku/create', [BahanBakuController::class, 'create'])->name('bahan-baku.create');
         Route::post('bahan-baku', [BahanBakuController::class, 'store'])->name('bahan-baku.store');
         Route::delete('bahan-baku/{bahanBaku}', [BahanBakuController::class, 'destroy'])->name('bahan-baku.destroy');
+
+        // Fitur Lihat Status Permintaan (Admin Only)
+    Route::get('permintaan', [PermintaanController::class, 'index'])->name('permintaan.index');
+    Route::post('permintaan/{permintaan}/approve', [PermintaanController::class, 'approve'])->name('permintaan.approve');
+    Route::post('permintaan/{permintaan}/reject', [PermintaanController::class, 'reject'])->name('permintaan.reject');
     });
 });

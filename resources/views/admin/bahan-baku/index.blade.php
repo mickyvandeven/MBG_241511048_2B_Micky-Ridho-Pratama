@@ -20,7 +20,7 @@
             <div class="col-12">
                 <div class="d-flex justify-content-between align-items-center mb-4">
                     <h2>Daftar Bahan Baku</h2>
-                    <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                        <a href="{{ route('admin.dashboard') }}" class="btn btn-warning">
                         Kembali ke Dashboard
                     </a>
                 </div>

@@ -65,6 +65,21 @@
             </div>
 
             <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="mb-3">
+                            <h1 style="font-size: 3rem; color: #fd7e14;">📝</h1>
+                        </div>
+                        <h5 class="card-title">Status Permintaan</h5>
+                        <p class="card-text">Lihat semua permintaan & statusnya</p>
+                        <a href="{{ route('admin.permintaan.index') }}" class="btn btn-warning">
+                            Lihat Permintaan
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm border-info">
                     <div class="card-body text-center">
                         <div class="mb-3">
